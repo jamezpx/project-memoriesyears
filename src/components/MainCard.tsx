@@ -28,6 +28,18 @@ export default function MainCard({ children }: { children?: React.ReactNode }) {
 					onValueChange={(v) => setSection(v as Section)}
 				/>
 			</div>
+
+			<div className={section === "dates" ? "" : "hidden"}>
+				<PhotoDateEditor />
+			</div>
+
+			<div className={section === "places" ? "" : "hidden"}>
+				<PlacesGenerator />
+			</div>
+
+			<div className={section === "moments" ? "" : "hidden"}>
+				<MomentsDownloads />
+			</div>
 		</Card>
 	);
 }
