@@ -17,7 +17,7 @@ export default function MainCard({ children }: { children?: React.ReactNode }) {
 	const [section, setSection] = useState<Section>("dates");
 
 	return (
-		<Card className="w-full max-w-2xl">
+		<Card className="max-h-full w-full max-w-2xl grid-rows-[auto_auto_minmax(0,1fr)]">
 			{/* <Card.Title>ODA Tool for OTD</Card.Title> */}
 
 			<div className="max-w-full overflow-x-auto">
@@ -29,15 +29,15 @@ export default function MainCard({ children }: { children?: React.ReactNode }) {
 				/>
 			</div>
 
-			<div className={section === "dates" ? "" : "hidden"}>
+			<div className={section === "dates" ? "flex min-h-0 flex-col" : "hidden"}>
 				<PhotoDateEditor />
 			</div>
 
-			<div className={section === "places" ? "" : "hidden"}>
+			<div className={section === "places" ? "flex min-h-0 flex-col" : "hidden"}>
 				<PlacesGenerator />
 			</div>
 
-			<div className={section === "moments" ? "" : "hidden"}>
+			<div className={section === "moments" ? "flex min-h-0 flex-col" : "hidden"}>
 				<MomentsDownloads />
 			</div>
 		</Card>
