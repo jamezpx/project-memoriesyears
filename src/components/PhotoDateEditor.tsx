@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { DropZone } from "@unlocalhosted/metalui";
+import { Attachment, DropZone } from "@unlocalhosted/metalui";
+
+type Item = { id: string; file: File };
 
 export default function PhotoDateEditor() {
-	const [files, setFiles] = useState<File[]>([]);
+	const [items, setItems] = useState<Item[]>([]);
 	const [notice, setNotice] = useState<string>("");
 
 	return (
@@ -14,7 +16,7 @@ export default function PhotoDateEditor() {
 				description="Drag and drop your photos here, or click to select files"
 				title="Select Photos"
 				onFiles={(took, refused) => {
-					setFiles((all) => [...all, ...took]);
+					setItems((all) => [...all, ...took.map((file) => ({ id: crypto.randomUUID(), file }))]);
 					setNotice(
 						refused.length ? `${refused.length} files skipped: only JPG, JPEG, PNG, and HEIC files are supported.` : "",
 					);
@@ -23,16 +25,16 @@ export default function PhotoDateEditor() {
 
 			{notice && <p className="text-sm opacity-70">{notice}</p>}
 
-			{files.length > 0 && (
-				<div>
-					<p className="text-sm opacity-70">Selected files:</p>
-					<ul className="grid gap-1 text-sm">
-						{files.map((f) => (
-							<li key={`${f.name}-${f.size}`} className="truncate">
-								{f.name}
-							</li>
-						))}
-					</ul>
+			{items.length > 0 && (
+				<div className="grid gap-2">
+					{items.map(({ id, file }) => (
+						<Attachment
+							key={id}
+							name={file.name}
+							size={file.size}
+							onRemove={() => setItems((all) => all.filter((item) => item.id !== id))}
+						/>
+					))}
 				</div>
 			)}
 		</div>
