@@ -22,6 +22,19 @@ export default function PhotoDateEditor() {
 			/>
 
 			{notice && <p className="text-sm opacity-70">{notice}</p>}
+
+			{files.length > 0 && (
+				<div>
+					<p className="text-sm opacity-70">Selected files:</p>
+					<ul className="grid gap-1 text-sm">
+						{files.map((f) => (
+							<li key={`${f.name}-${f.size}`} className="truncate">
+								{f.name}
+							</li>
+						))}
+					</ul>
+				</div>
+			)}
 		</div>
 	);
 }
