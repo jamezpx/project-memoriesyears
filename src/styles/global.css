@@ -1,1 +1,18 @@
 @import "tailwindcss";
+@import "@unlocalhosted/metalui/styles.css";
+@import "@fontsource-variable/geist";
+
+/* :root {
+	font-family: "Geist Variable", system-ui, sans-serif;
+}
+code,
+pre {
+	font-family: "Geist Mono Variable", ui-monospace, monospace;
+} */
+
+h1 {
+	font-size: 1.875rem;
+	line-height: 2.25rem;
+	font-weight: 700;
+	text-decoration-line: none;
+}
