@@ -27,7 +27,9 @@ export default function PhotoDateEditor() {
 			//await readExifDate(item.file); // your existing logic
 			setItems((all) => all.map((i) => (i.id === id ? { ...i, error: undefined } : i)));
 		} catch {
-			setItems((all) => all.map((i) => (i.id === id ? { ...i, error: "Couldn't read the date" } : i)));
+			setItems((all) =>
+				all.map((i) => (i.id === id ? { ...i, error: "Couldn't read the date" } : i)),
+			);
 		}
 	};
 
@@ -42,7 +44,9 @@ export default function PhotoDateEditor() {
 				onFiles={(took, refused) => {
 					setItems((all) => [...all, ...took.map((file) => ({ id: crypto.randomUUID(), file }))]);
 					setNotice(
-						refused.length ? `${refused.length} files skipped: only JPG, JPEG, PNG, and HEIC files are supported.` : "",
+						refused.length
+							? `${refused.length} files skipped: only JPG, JPEG, PNG, and HEIC files are supported.`
+							: "",
 					);
 				}}
 			/>
@@ -55,7 +59,8 @@ export default function PhotoDateEditor() {
 					to={to}
 					onFromChange={setFrom}
 					onToChange={setTo}
-					onReroll={() => setRoll((r) => r + 1)}>
+					onReroll={() => setRoll((r) => r + 1)}
+				>
 					{items.map(({ id, file, error }) => (
 						<Attachment
 							key={id}

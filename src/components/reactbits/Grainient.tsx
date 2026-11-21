@@ -51,7 +51,15 @@ type Settings = {
 	dpr?: number;
 };
 
-type Sample = { x: number; y: number; vx: number; vy: number; age: number; grow: number; done: boolean };
+type Sample = {
+	x: number;
+	y: number;
+	vx: number;
+	vy: number;
+	age: number;
+	grow: number;
+	done: boolean;
+};
 
 type Spin = { x: number; y: number; age: number; direction: number };
 
@@ -255,7 +263,8 @@ void main() {
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
-const toLinear = (value: number) => (value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4);
+const toLinear = (value: number) =>
+	value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
 
 const toLab = ([r, g, b]: number[]): number[] => {
 	const lr = toLinear(r);
@@ -335,7 +344,10 @@ const Grainient = ({
 	const containerRef = useRef<HTMLDivElement>(null);
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const wakeRef = useRef<(() => void) | null>(null);
-	const palette = (Array.isArray(colors) && colors.length ? colors : DEFAULT_COLORS).slice(0, MAX_COLORS);
+	const palette = (Array.isArray(colors) && colors.length ? colors : DEFAULT_COLORS).slice(
+		0,
+		MAX_COLORS,
+	);
 	const settings: Settings = {
 		colors: palette.length > 1 ? palette : [palette[0], palette[0]],
 		type: TYPES[type] ?? 0,
@@ -499,7 +511,17 @@ const Grainient = ({
 				fieldSize.width = width;
 				fieldSize.height = height;
 				gl.bindTexture(gl.TEXTURE_2D, target);
-				gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+				gl.texImage2D(
+					gl.TEXTURE_2D,
+					0,
+					gl.RGBA8,
+					width,
+					height,
+					0,
+					gl.RGBA,
+					gl.UNSIGNED_BYTE,
+					null,
+				);
 				gl.bindFramebuffer(gl.FRAMEBUFFER, buffer);
 				gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, target, 0);
 				gl.bindFramebuffer(gl.FRAMEBUFFER, null);
@@ -561,7 +583,15 @@ const Grainient = ({
 				}
 				const k = spin.age / TWIRL_LIFE;
 				const envelope = Math.min(1, spin.age / 0.18) * (1 - k) * (1 - k);
-				twirls.set([spin.x, spin.y, spin.direction * 2.4 * envelope, 0.16 + 0.1 * Math.min(1, spin.age / 0.5)], i * 4);
+				twirls.set(
+					[
+						spin.x,
+						spin.y,
+						spin.direction * 2.4 * envelope,
+						0.16 + 0.1 * Math.min(1, spin.age / 0.5),
+					],
+					i * 4,
+				);
 			}
 		};
 
@@ -581,7 +611,10 @@ const Grainient = ({
 			updateTouches(dt, view.width / view.height);
 			draw();
 			const busy =
-				(!reduce && (s.speed > 0 || s.grainAnimated)) || introClock < 1 || trail.length > 0 || spins.length > 0;
+				(!reduce && (s.speed > 0 || s.grainAnimated)) ||
+				introClock < 1 ||
+				trail.length > 0 ||
+				spins.length > 0;
 			if (busy) raf = requestAnimationFrame(frame);
 			else last = 0;
 		};
@@ -676,7 +709,8 @@ const Grainient = ({
 			ref={containerRef}
 			className={["relative h-full w-full overflow-hidden", className].filter(Boolean).join(" ")}
 			style={style}
-			{...rest}>
+			{...rest}
+		>
 			<canvas ref={canvasRef} className="absolute inset-0 block h-full w-full" aria-hidden="true" />
 		</div>
 	);

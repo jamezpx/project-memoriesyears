@@ -10,14 +10,37 @@ type Props = {
 	onReroll: () => void;
 };
 
-export default function YearRangeCard({ from, to, onFromChange, onToChange, onReroll, children }: Props) {
+export default function YearRangeCard({
+	from,
+	to,
+	onFromChange,
+	onToChange,
+	onReroll,
+	children,
+}: Props) {
 	return (
-		<Card aria-label="Year range and photos" className="min-h-0 grid-rows-[auto_minmax(0,1fr)] p-3!">
+		<Card
+			aria-label="Year range and photos"
+			className="min-h-0 grid-rows-[auto_minmax(0,1fr)] p-3!"
+		>
 			<div className="flex flex-wrap items-center gap-3">
 				<span className="text-sm opacity-70">From</span>
-				<DatePicker aria-label="From date" value={from} onValueChange={onFromChange} max={to ?? undefined} />
+				<DatePicker
+					aria-label="From date"
+					value={from}
+					onValueChange={onFromChange}
+					max={to ?? undefined}
+				/>
 				<span className="text-sm opacity-70">To</span>
-				<DatePicker aria-label="To date" value={to} onValueChange={onToChange} min={from ?? undefined} />
+				<div>
+					<p>Hola mundo Prueb</p>
+				</div>
+				<DatePicker
+					aria-label="To date"
+					value={to}
+					onValueChange={onToChange}
+					min={from ?? undefined}
+				/>
 				<Button size="compact" className="ml-auto" disabled={!from || !to} onClick={onReroll}>
 					Re-roll
 				</Button>
