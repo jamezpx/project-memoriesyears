@@ -1,20 +1,30 @@
 import type { ReactNode } from "react";
-import { Button, Card, DatePicker } from "@unlocalhosted/metalui";
+import { Button, Card, Select } from "@unlocalhosted/metalui";
+
+const MIN_YEAR = 1970;
+const THIS_YEAR = new Date().getFullYear();
+
+function yearOptions(min: number, max: number) {
+	return Array.from({ length: max - min + 1 }, (_, i) => {
+		const year = String(max - i);
+		return { value: year, label: year };
+	});
+}
 
 type Props = {
-	from: Date | null;
-	to: Date | null;
+	fromYear: number;
+	toYear: number;
+	onFromYearChange: (year: number) => void;
+	onToYearChange: (year: number) => void;
 	children: ReactNode;
-	onFromChange: (date: Date | null) => void;
-	onToChange: (date: Date | null) => void;
 	onReroll: () => void;
 };
 
 export default function YearRangeCard({
-	from,
-	to,
-	onFromChange,
-	onToChange,
+	fromYear,
+	toYear,
+	onFromYearChange,
+	onToYearChange,
 	onReroll,
 	children,
 }: Props) {
@@ -25,26 +35,22 @@ export default function YearRangeCard({
 		>
 			<div className="flex flex-wrap items-center gap-3">
 				<span className="text-sm opacity-70">From</span>
-				<DatePicker
-					aria-label="From date"
-					value={from}
-					onValueChange={onFromChange}
-					max={to ?? undefined}
+				<Select
+					aria-label="From year"
+					size="compact"
+					value={String(fromYear)}
+					options={yearOptions(MIN_YEAR, toYear)}
+					onValueChange={(value) => onFromYearChange(Number(value))}
 				/>
 				<span className="text-sm opacity-70">To</span>
-
-				<DatePicker
-					aria-label="To date"
-					value={to}
-					onValueChange={onToChange}
-					min={from ?? undefined}
-				/>
-				<Button
+				<Select
+					aria-label="To year"
 					size="compact"
-					className="ml-auto"
-					disabled={!from || !to}
-					onClick={onReroll}
-				>
+					value={String(toYear)}
+					options={yearOptions(fromYear, THIS_YEAR)}
+					onValueChange={(value) => onToYearChange(Number(value))}
+				/>
+				<Button size="compact" className="ml-auto" onClick={onReroll}>
 					Re-roll
 				</Button>
 			</div>

@@ -4,7 +4,7 @@ import YearRangeCard from "./YearRangeCard";
 import { readCaptureDate } from "../lib/ReadDate";
 
 type Item = { id: string; file: File; captureDate?: Date | null; error?: string };
-
+const THIS_YEAR = new Date().getFullYear();
 const dateFormat = new Intl.DateTimeFormat(undefined, {
 	dateStyle: "medium",
 	timeStyle: "short",
@@ -15,16 +15,6 @@ function yearsAgo(n: number) {
 	const year = now.getFullYear() - n;
 	const lastDay = new Date(year, now.getMonth() + 1, 0).getDate();
 	return new Date(year, now.getMonth(), Math.min(now.getDate(), lastDay));
-}
-
-// Corre el worker sobre la `list`, por mucho con el `limit` al tiempo
-async function runPool<T>(list: T[], limit: number, worker: (item: T) => Promise<void>) {
-	let next = 0;
-	await Promise.all(
-		Array.from({ length: Math.min(limit, list.length) }, async () => {
-			while (next < list.length) await worker(list[next++]);
-		}),
-	);
 }
 
 function CaptureDate({ date, failed }: { date?: Date | null; failed: boolean }) {
@@ -40,8 +30,8 @@ function CaptureDate({ date, failed }: { date?: Date | null; failed: boolean }) 
 export default function PhotoDateEditor() {
 	const [items, setItems] = useState<Item[]>([]);
 	const [notice, setNotice] = useState<string>("");
-	const [from, setFrom] = useState<Date | null>(yearsAgo(10));
-	const [to, setTo] = useState<Date | null>(yearsAgo(1));
+	const [fromYear, setFromYear] = useState(THIS_YEAR - 10);
+	const [toYear, setToYear] = useState(THIS_YEAR - 1);
 	const [roll, setRoll] = useState<number>(0);
 
 	const hasFiles = items.length > 0;
@@ -79,7 +69,7 @@ export default function PhotoDateEditor() {
 
 					setItems((all) => [...all, ...added]);
 
-					void runPool(added, 3, (item) => readDate(item.id, item.file));
+					added.forEach(({ id, file }) => void readDate(id, file));
 
 					setNotice(
 						refused.length
@@ -93,10 +83,10 @@ export default function PhotoDateEditor() {
 
 			{hasFiles && (
 				<YearRangeCard
-					from={from}
-					to={to}
-					onFromChange={setFrom}
-					onToChange={setTo}
+					fromYear={fromYear}
+					toYear={toYear}
+					onFromYearChange={setFromYear}
+					onToYearChange={setToYear}
 					onReroll={() => setRoll((r) => r + 1)}
 				>
 					<table className="w-full min-w-lg table-fixed border-separate border-spacing-y-2">
