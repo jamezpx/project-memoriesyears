@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Attachment, DropZone, Table, ScrollArea } from "@unlocalhosted/metalui";
+import { Attachment, Button, Dialog, DropZone, Table } from "@unlocalhosted/metalui";
 import YearRangeCard from "./YearRangeCard";
 import { readCaptureDate } from "../lib/ReadDate";
 import { daysInMonth, buildDate, yearFromSeed, newDateFor } from "../lib/DateParts";
@@ -42,6 +42,7 @@ export default function PhotoDateEditor() {
 	const [busy, setBusy] = useState<{ done: number; total: number; mode: "zip" | "each" } | null>(
 		null,
 	);
+	const [helpModalOpened, setHelpModalOpened] = useState<boolean>(true);
 
 	const canDownload =
 		items.length > 0 && !items.some((i) => i.captureDate === undefined && !i.error);
@@ -165,6 +166,55 @@ export default function PhotoDateEditor() {
 
 			{notice && <p className="shrink-0 text-sm opacity-70">{notice}</p>}
 
+			<Dialog open={helpModalOpened} onOpenChange={setHelpModalOpened}>
+				<Dialog.Popup>
+					<Dialog.Title>How the Photo Date Editor works</Dialog.Title>
+
+					<p className="test-sm opacity-80">
+						Upload some photos here, the tool will allow you to change the captured date
+						of the photo, this way it is easier to generate OTDs (On This Day) from
+						previous years.
+					</p>
+
+					<p className="test-sm opacity-80">
+						If you're on iOS, select <Button>Download ZIP</Button>
+					</p>
+
+					<p className="test-sm opacity-80">
+						If you're on Android, select <Button>Download Each</Button>
+					</p>
+
+					<p className="test-sm opacity-80 font-bold">
+						Use this tool preferably on a desktop computer
+					</p>
+
+					<p className="test-sm opacity-80">
+						Upload the downloaded files to the account you're using.
+					</p>
+
+					<p className="text-xs opacity-60">
+						All the photos are processed on the client-side. No photos are uploaded or
+						transferred to this or other server. This tool is open source
+					</p>
+
+					<Dialog.Actions>
+						<Button
+							nativeButton={false}
+							render={
+								<a
+									href="https://github.com/jamezpx/project-memoriesyears"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							}
+						>
+							View source code
+						</Button>
+						<Button onClick={() => setHelpModalOpened(false)}>Close</Button>
+					</Dialog.Actions>
+				</Dialog.Popup>
+			</Dialog>
+
 			{hasFiles && (
 				<>
 					<YearRangeCard
@@ -254,6 +304,7 @@ export default function PhotoDateEditor() {
 						}
 						onDownload={() => run("zip")}
 						onDownloadEach={() => run("each")}
+						onHelpClicked={() => setHelpModalOpened(true)}
 					/>
 				</>
 			)}

@@ -1,4 +1,4 @@
-import { Button, Card } from "@unlocalhosted/metalui";
+import { Button, Card, Dialog } from "@unlocalhosted/metalui";
 import { DownloadIcon, TrashIcon, GroupIcon } from "@unlocalhosted/metalui/icons";
 import { LifeSubscriptionIcon, LifeDeadlineIcon } from "@unlocalhosted/metalui/icons/life";
 
@@ -9,6 +9,7 @@ type Props = {
 	onReroll: () => void;
 	onDownload: () => void;
 	onDownloadEach: () => void;
+	onHelpClicked: () => void;
 };
 
 export default function PhotoToolbar({
@@ -18,6 +19,7 @@ export default function PhotoToolbar({
 	onReroll,
 	onDownload,
 	onDownloadEach,
+	onHelpClicked,
 }: Props) {
 	return (
 		<Card.Footer className="justify-center">
@@ -49,6 +51,10 @@ export default function PhotoToolbar({
 				)}
 
 				{busy?.mode === "each" ? `Saving ${busy.done}/${busy.total}…` : "Download each"}
+			</Button>
+
+			<Button size="compact" onClick={onHelpClicked}>
+				Help
 			</Button>
 		</Card.Footer>
 	);
