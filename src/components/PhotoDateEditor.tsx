@@ -2,7 +2,10 @@ import { useState } from "react";
 import { Attachment, DropZone } from "@unlocalhosted/metalui";
 import YearRangeCard from "./YearRangeCard";
 import { readCaptureDate } from "../lib/ReadDate";
-import { daysInMonth, buildDate, yearFromSeed } from "../lib/DateParts";
+import { daysInMonth, buildDate, yearFromSeed, newDateFor } from "../lib/DateParts";
+import { writeCaptureDate } from "../lib/WriteDate";
+import { saveZip, type ZipEntry } from "../lib/Zip";
+import { date } from "astro/zod";
 
 const newDateFormat = new Intl.DateTimeFormat(undefined, { dateStyle: "medium" });
 type Item = { id: string; file: File; seed: number; captureDate?: Date | null; error?: string };
@@ -36,6 +39,41 @@ export default function PhotoDateEditor() {
 	const [month, setMonth] = useState(() => new Date().getMonth());
 	const [day, setDay] = useState(() => new Date().getDate());
 	const [roll, setRoll] = useState<number>(0);
+	const [busy, setBusy] = useState<{ done: number; total: number } | null>(null);
+
+	const canDownload =
+		items.length > 0 && !items.some((i) => i.captureDate === undefined && !i.error);
+
+	const download = async () => {
+		const total = items.length;
+		const entries: ZipEntry[] = [];
+		const failed: string[] = [];
+		setBusy({ done: 0, total });
+
+		for (const [index, item] of items.entries()) {
+			const date = newDateFor(item.seed, fromYear, toYear, month, day, item.captureDate);
+
+			try {
+				entries.push({
+					name: item.file.name,
+					date,
+					blob: await writeCaptureDate(item.file, date),
+				});
+			} catch (e) {
+				console.error("writeCaptureDate failed", item.file.name, e);
+				failed.push(item.file.name);
+			}
+			setBusy({ done: index + 1, total });
+		}
+
+		if (entries.length) await saveZip(entries, "photos.zip");
+		setNotice(
+			failed.length
+				? `${failed.length} photo(s) couldn't be updated and are not in the ZIP: ${failed.join(", ")}`
+				: "",
+		);
+		setBusy(null);
+	};
 
 	const hasFiles = items.length > 0;
 
@@ -110,6 +148,9 @@ export default function PhotoDateEditor() {
 					onReroll={() =>
 						setItems((all) => all.map((item) => ({ ...item, seed: Math.random() })))
 					}
+					canDownload={canDownload}
+					busy={busy}
+					onDownload={download}
 				>
 					<table className="w-full min-w-lg table-fixed border-separate border-spacing-y-2">
 						<colgroup>
@@ -153,11 +194,14 @@ export default function PhotoDateEditor() {
 										<CaptureDate date={captureDate} failed={!!error} />
 									</td>
 									<td className="px-3 align-middle text-sm opacity-70">
-										{newDateFormat.format(
-											buildDate(
-												yearFromSeed(seed, fromYear, toYear),
+										{dateFormat.format(
+											newDateFor(
+												seed,
+												fromYear,
+												toYear,
 												month,
 												day,
+												captureDate,
 											),
 										)}
 									</td>
