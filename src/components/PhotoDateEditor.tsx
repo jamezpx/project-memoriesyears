@@ -62,14 +62,17 @@ export default function PhotoDateEditor() {
 				const date = newDateFor(item.seed, fromYear, toYear, month, day, item.captureDate);
 
 				try {
-					const blob = await writeCaptureDate(item.file, date);
+					const data = await writeCaptureDate(item.file, date);
 					if (mode === "each") {
-						saveFile(blob, item.file.name);
-
+						void saveFile(
+							new Blob([data as BlobPart], { type: item.file.type }),
+							item.file.name,
+							5_000,
+						);
 						await new Promise((resolve) => setTimeout(resolve, 400));
 					} else {
-						group.push({ name: item.file.name, date, blob });
-						groupBytes += blob.size;
+						group.push({ name: item.file.name, date, data });
+						groupBytes += data.byteLength;
 					}
 				} catch (e) {
 					console.error("writeCaptureDate failed", item.file.name, e);

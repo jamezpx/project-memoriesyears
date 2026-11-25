@@ -21,7 +21,7 @@ function replaceAll(bytes: Uint8Array, from: Uint8Array, to: Uint8Array) {
 	return count;
 }
 
-export async function patchDateInPlace(file: File, newDay: string): Promise<Blob | null> {
+export async function patchDateInPlace(file: File, newDay: string): Promise<Uint8Array | null> {
 	if (!FAST_FORMATS.test(file.name)) return null;
 
 	const tags = (await exifr.parse(file, { pick: [...TAGS], reviveValues: false })) as
@@ -57,5 +57,5 @@ export async function patchDateInPlace(file: File, newDay: string): Promise<Blob
 	const found = [check?.DateTimeOriginal, check?.CreateDate].filter((v): v is string => !!v);
 	if (found.length === 0 || !found.every((v) => v.startsWith(newDay))) return null;
 
-	return new Blob([bytes], { type: file.type });
+	return bytes;
 }

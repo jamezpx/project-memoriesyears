@@ -1,10 +1,10 @@
 import { downloadZip } from "client-zip";
 
-export type ZipEntry = { name: string; date: Date; blob: Blob };
+export type ZipEntry = { name: string; date: Date; data: Uint8Array };
 
 const MIN_ZIP_DATE = new Date(1980, 0, 1);
 
-export function saveFile(blob: Blob, filename: string) {
+export function saveFile(blob: Blob, filename: string, holdMs = 10_000): Promise<void> {
 	const url = URL.createObjectURL(blob);
 	const link = document.createElement("a");
 	link.href = url;
@@ -12,7 +12,12 @@ export function saveFile(blob: Blob, filename: string) {
 	document.body.appendChild(link);
 	link.click();
 	link.remove();
-	setTimeout(() => URL.revokeObjectURL(url), 60_000);
+	return new Promise((resolve) => {
+		setTimeout(() => {
+			URL.revokeObjectURL(url);
+			resolve();
+		}, holdMs);
+	});
 }
 
 export async function saveZip(entries: ZipEntry[], filename: string) {
@@ -31,9 +36,9 @@ export async function saveZip(entries: ZipEntry[], filename: string) {
 		entries.map((e) => ({
 			name: unique(e.name),
 			lastModified: e.date < MIN_ZIP_DATE ? MIN_ZIP_DATE : e.date,
-			input: e.blob,
+			input: e.data,
 		})),
 	).blob();
 
-	saveFile(zip, filename);
+	await saveFile(zip, filename);
 }

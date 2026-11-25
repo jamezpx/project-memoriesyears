@@ -21,6 +21,6 @@ export function writeTags(file: File, tags: Record<string, string>) {
 	return enqueue(async () => {
 		const result = await writeMetadata(file, tags);
 		if (!result.success) throw new Error(result.error || "Could not write the metadata");
-		return new Blob([new Uint8Array(result.data)], { type: file.type });
+		return new Uint8Array(result.data);
 	});
 }
