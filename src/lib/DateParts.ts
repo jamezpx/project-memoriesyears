@@ -14,3 +14,12 @@ export function dayOptions(month: number) {
 		label: String(i + 1),
 	}));
 }
+
+export function yearFromSeed(seed: number, from: number, to: number) {
+	return from + Math.floor(seed * (to - from + 1));
+}
+
+export function buildDate(year: number, month: number, day: number) {
+	const lastDay = new Date(year, month + 1, 0).getDate();
+	return new Date(year, month, Math.min(day, lastDay));
+}

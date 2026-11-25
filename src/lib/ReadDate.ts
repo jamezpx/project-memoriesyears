@@ -50,8 +50,12 @@ export async function readOnce(file: File): Promise<Date | null> {
 // La instancia de ExifTool WASM solo puede manejar una llamada al tiempo
 let queue: Promise<unknown> = Promise.resolve();
 
-export function readCaptureDate(file: File): Promise<Date | null> {
-	const run = queue.then(() => readOnce(file));
+export function enqueueExif<T>(task: () => Promise<T>): Promise<T> {
+	const run = queue.then(task);
 	queue = run.catch(() => undefined);
 	return run;
+}
+
+export function readCaptureDate(file: File): Promise<Date | null> {
+	return enqueueExif(() => readOnce(file));
 }
