@@ -1,7 +1,14 @@
+import { Card, Select } from "@unlocalhosted/metalui";
+
 export default function MomentsDownloads() {
 	return (
-		<div>
-			<p className="text-sm opacity-70">Here you can download your moments.</p>
-		</div>
+		<Card
+			aria-label="Year range and photos"
+			className="min-h-0 grid-rows-[auto_minmax(0,1fr)] p-3!"
+		>
+			<div className="h-dvh">
+				<p className="text-sm opacity-80">Coming soon...</p>
+			</div>
+		</Card>
 	);
 }

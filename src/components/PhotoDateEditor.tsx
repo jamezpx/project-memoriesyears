@@ -230,7 +230,7 @@ export default function PhotoDateEditor() {
 						<Table
 							caption="Photos"
 							captionHidden
-							className="min-w-136 table-fixed [&_th:nth-child(2)]:w-44 [&_th:nth-child(3)]:w-36"
+							className="table-fixed [&_th:nth-child(2)]:w-[clamp(6.5rem,22vw,10rem)] [&_th:nth-child(3)]:w-[clamp(6rem,18vw,8.5rem)]"
 							rows={items}
 							rowKey={(item) => item.id}
 							columns={[
@@ -244,7 +244,7 @@ export default function PhotoDateEditor() {
 											size={item.file.size}
 											error={item.error}
 											onRetry={() => process(item.id)}
-											className="[--mu-r-attachment-remove-glyph:18px] m-1"
+											className="[--mu-r-attachment-remove-glyph:18px] my-2 max-sm:[&>.mu-attachment-type]:hidden"
 											onRemove={() =>
 												setItems((all) =>
 													all.filter((i) => i.id !== item.id),

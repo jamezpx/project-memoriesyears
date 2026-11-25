@@ -41,7 +41,7 @@ export default function YearRangeCard({
 			className="min-h-0 grid-rows-[auto_minmax(0,1fr)] p-3!"
 		>
 			<div className="flex flex-wrap items-center gap-3 mb-2">
-				<span className="text-sm opacity-70">From</span>
+				<span className="text-sm opacity-70 ml-2">From</span>
 				<Select
 					aria-label="From year"
 					size="compact"
