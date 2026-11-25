@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "@unlocalhosted/metalui/styles.css";
 @import "@unlocalhosted/metalui/icons.css";
+@import "@unlocalhosted/metalui/icons/life.css";
 
 /* :root {
 	font-family: "Geist Variable", system-ui, sans-serif;

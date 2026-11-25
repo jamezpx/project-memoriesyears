@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import { Button, Card, Select } from "@unlocalhosted/metalui";
 import { dayOptions, monthOptions } from "../lib/DateParts";
+import { DownloadIcon, TrashIcon } from "@unlocalhosted/metalui/icons";
+import { LifeSubscriptionIcon } from "@unlocalhosted/metalui/icons/life";
 
 const MIN_YEAR = 1970;
 const THIS_YEAR = new Date().getFullYear();
@@ -90,9 +92,11 @@ export default function YearRangeCard({
 
 				<div className="mr-auto flex flex-wrap items-center gap-2">
 					<Button size="compact" onClick={onClear}>
+						<TrashIcon size={20} />
 						Clear selection
 					</Button>
 					<Button size="compact" onClick={onReroll}>
+						<LifeSubscriptionIcon size={12} />
 						Re-roll
 					</Button>
 					<Button
@@ -100,6 +104,7 @@ export default function YearRangeCard({
 						disabled={!canDownload || busy !== null}
 						onClick={onDownload}
 					>
+						<DownloadIcon size={16} />
 						{busy ? `Writing ${busy.done}/${busy.total}...` : "Download ZIP"}
 					</Button>
 				</div>
