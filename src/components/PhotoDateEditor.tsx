@@ -39,10 +39,15 @@ export default function PhotoDateEditor() {
 				className="shrink-0"
 				compact={hasFiles}
 				accept=".jpg, .jpeg, .png, .heic"
-				description={hasFiles ? "Drop more photos here" : "Drop photos here or click to select"}
+				description={
+					hasFiles ? "Drop more photos here" : "Drop photos here or click to select"
+				}
 				title={hasFiles ? "Add more photos" : "Select photos"}
 				onFiles={(took, refused) => {
-					setItems((all) => [...all, ...took.map((file) => ({ id: crypto.randomUUID(), file }))]);
+					setItems((all) => [
+						...all,
+						...took.map((file) => ({ id: crypto.randomUUID(), file })),
+					]);
 					setNotice(
 						refused.length
 							? `${refused.length} files skipped: only JPG, JPEG, PNG, and HEIC files are supported.`
@@ -61,17 +66,50 @@ export default function PhotoDateEditor() {
 					onToChange={setTo}
 					onReroll={() => setRoll((r) => r + 1)}
 				>
-					{items.map(({ id, file, error }) => (
-						<Attachment
-							key={id}
-							name={file.name}
-							size={file.size}
-							error={error}
-							onRetry={() => process(id)}
-							className="[--mu-r-attachment-remove-glyph:18px]"
-							onRemove={() => setItems((all) => all.filter((item) => item.id !== id))}
-						/>
-					))}
+					<table className="w-full min-w-lg table-fixed border-separate border-spacing-y-2">
+						<colgroup>
+							<col />
+							<col className="w-36" />
+							<col className="w-36" />
+						</colgroup>
+
+						<thead>
+							<tr className="text-left text-xs opacity-70">
+								<th scope="col" className="px-1 font-normal">
+									Photo
+								</th>
+								<th scope="col" className="px-3 font-normal">
+									Capture date
+								</th>
+								<th scope="col" className="px-3 font-normal">
+									New date
+								</th>
+							</tr>
+						</thead>
+
+						<tbody>
+							{items.map(({ id, file, error }) => (
+								<tr key={id}>
+									<td className="min-w-0 p-0 align-middle">
+										<Attachment
+											name={file.name}
+											size={file.size}
+											error={error}
+											onRetry={() => process(id)}
+											className="[--mu-r-attachment-remove-glyph:18px]"
+											onRemove={() =>
+												setItems((all) =>
+													all.filter((item) => item.id !== id),
+												)
+											}
+										/>
+									</td>
+									<td className="px-3 align-middle text-sm opacity-70">-</td>
+									<td className="px-3 align-middle text-sm opacity-70">-</td>
+								</tr>
+							))}
+						</tbody>
+					</table>
 				</YearRangeCard>
 			)}
 		</div>
