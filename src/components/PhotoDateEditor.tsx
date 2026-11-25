@@ -2,13 +2,13 @@ import { useState } from "react";
 import { Attachment, DropZone } from "@unlocalhosted/metalui";
 import YearRangeCard from "./YearRangeCard";
 import { readCaptureDate } from "../lib/ReadDate";
-import { daysInMonth } from "../lib/DateParts";
+import { daysInMonth, buildDate, yearFromSeed } from "../lib/DateParts";
 
-type Item = { id: string; file: File; captureDate?: Date | null; error?: string };
+const newDateFormat = new Intl.DateTimeFormat(undefined, { dateStyle: "medium" });
+type Item = { id: string; file: File; seed: number; captureDate?: Date | null; error?: string };
 const THIS_YEAR = new Date().getFullYear();
 const dateFormat = new Intl.DateTimeFormat(undefined, {
 	dateStyle: "medium",
-	timeStyle: "short",
 });
 
 function yearsAgo(n: number) {
@@ -73,7 +73,11 @@ export default function PhotoDateEditor() {
 				}
 				title={hasFiles ? "Add more photos" : "Select photos"}
 				onFiles={(took, refused) => {
-					const added = took.map((file) => ({ id: crypto.randomUUID(), file }));
+					const added = took.map((file) => ({
+						id: crypto.randomUUID(),
+						file,
+						seed: Math.random(),
+					}));
 
 					setItems((all) => [...all, ...added]);
 
@@ -103,7 +107,9 @@ export default function PhotoDateEditor() {
 						setItems([]);
 						setNotice("");
 					}}
-					onReroll={() => setRoll((r) => r + 1)}
+					onReroll={() =>
+						setItems((all) => all.map((item) => ({ ...item, seed: Math.random() })))
+					}
 				>
 					<table className="w-full min-w-lg table-fixed border-separate border-spacing-y-2">
 						<colgroup>
@@ -114,20 +120,20 @@ export default function PhotoDateEditor() {
 
 						<thead>
 							<tr className="text-left text-xs opacity-70">
-								<th scope="col" className="px-1 font-normal">
+								<th scope="col" className="px-1 font-extrabold">
 									Photo
 								</th>
-								<th scope="col" className="px-3 font-normal">
+								<th scope="col" className="px-3 font-extrabold">
 									Capture date
 								</th>
-								<th scope="col" className="px-3 font-normal">
+								<th scope="col" className="px-3 font-extrabold">
 									New date
 								</th>
 							</tr>
 						</thead>
 
 						<tbody>
-							{items.map(({ id, file, error, captureDate }) => (
+							{items.map(({ id, file, error, captureDate, seed }) => (
 								<tr key={id}>
 									<td className="min-w-0 p-0 align-middle">
 										<Attachment
@@ -146,7 +152,15 @@ export default function PhotoDateEditor() {
 									<td className="px-3 align-middle text-sm opacity-70">
 										<CaptureDate date={captureDate} failed={!!error} />
 									</td>
-									<td className="px-3 align-middle text-sm opacity-70">-</td>
+									<td className="px-3 align-middle text-sm opacity-70">
+										{newDateFormat.format(
+											buildDate(
+												yearFromSeed(seed, fromYear, toYear),
+												month,
+												day,
+											),
+										)}
+									</td>
 								</tr>
 							))}
 						</tbody>
