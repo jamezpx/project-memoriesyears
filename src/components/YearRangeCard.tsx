@@ -32,16 +32,19 @@ export default function YearRangeCard({
 					max={to ?? undefined}
 				/>
 				<span className="text-sm opacity-70">To</span>
-				<div>
-					<p>Hola mundo Prueb</p>
-				</div>
+
 				<DatePicker
 					aria-label="To date"
 					value={to}
 					onValueChange={onToChange}
 					min={from ?? undefined}
 				/>
-				<Button size="compact" className="ml-auto" disabled={!from || !to} onClick={onReroll}>
+				<Button
+					size="compact"
+					className="ml-auto"
+					disabled={!from || !to}
+					onClick={onReroll}
+				>
 					Re-roll
 				</Button>
 			</div>
