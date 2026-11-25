@@ -26,7 +26,7 @@ function parseExifDate(value: unknown): Date | null {
 	return new Date(year, month - 1, day, hour, minute, second);
 }
 
-export async function readCaptureDate(file: File): Promise<Date | null> {
+export async function readOnce(file: File): Promise<Date | null> {
 	const result = await parseMetadata(file, {
 		args: ["-json", ...TAGS.map((tag) => `-${tag}`)],
 		transform: (data) => JSON.parse(data) as ExifDates[],
@@ -45,4 +45,13 @@ export async function readCaptureDate(file: File): Promise<Date | null> {
 	}
 
 	return null;
+}
+
+// La instancia de ExifTool WASM solo puede manejar una llamada al tiempo
+let queue: Promise<unknown> = Promise.resolve();
+
+export function readCaptureDate(file: File): Promise<Date | null> {
+	const run = queue.then(() => readOnce(file));
+	queue = run.catch(() => undefined);
+	return run;
 }
