@@ -6,7 +6,7 @@ export default function MomentsDownloads() {
 			aria-label="Year range and photos"
 			className="min-h-0 grid-rows-[auto_minmax(0,1fr)] p-3!"
 		>
-			<div className="h-dvh">
+			<div className="h-40">
 				<p className="text-sm opacity-80">Coming soon...</p>
 			</div>
 		</Card>

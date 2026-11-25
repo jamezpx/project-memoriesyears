@@ -7,8 +7,8 @@ import MomentsDownloads from "./MomentsDownloads";
 
 const SECTIONS = [
 	{ value: "dates", label: "Photo Date Editor" },
-	{ value: "places", label: "Places Generator" },
-	{ value: "moments", label: "Moments Downloads" },
+	{ value: "places", label: "Places Generator", disabled: true },
+	{ value: "moments", label: "Moments Downloads", disabled: true },
 ];
 
 type Section = "dates" | "places" | "moments";
