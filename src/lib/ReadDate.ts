@@ -1,4 +1,5 @@
 import { parseMetadata } from "@uswriting/exiftool";
+import exifr from "exifr";
 
 type ExifDates = {
 	DateTimeOriginal?: string;
@@ -56,6 +57,27 @@ export function enqueueExif<T>(task: () => Promise<T>): Promise<T> {
 	return run;
 }
 
-export function readCaptureDate(file: File): Promise<Date | null> {
+export async function readCaptureDate(file: File): Promise<Date | null> {
+	try {
+		const data = await exifr.parse(file, {
+			pick: ["DateTimeOriginal", "CreateDate"],
+			xmp: true,
+		});
+
+		for (const tag of TAGS) {
+			const date = toValidDate(data?.[tag]);
+			if (date) return date;
+		}
+	} catch {
+		// Ignore and fall back to ExifTool for unsupported/unusual formats
+	}
+
 	return enqueueExif(() => readOnce(file));
+}
+
+function toValidDate(value: unknown): Date | null {
+	if (value instanceof Date && !Number.isNaN(value.getTime())) {
+		return value;
+	}
+	return parseExifDate(value);
 }
