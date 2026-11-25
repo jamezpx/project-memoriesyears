@@ -28,7 +28,7 @@ function parseExifDate(value: unknown): Date | null {
 
 export async function readOnce(file: File): Promise<Date | null> {
 	const result = await parseMetadata(file, {
-		args: ["-json", ...TAGS.map((tag) => `-${tag}`)],
+		args: ["-fast2", "-json", ...TAGS.map((tag) => `-${tag}`)],
 		transform: (data) => JSON.parse(data) as ExifDates[],
 	});
 
