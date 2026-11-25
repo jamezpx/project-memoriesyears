@@ -1,8 +1,6 @@
 import type { ReactNode } from "react";
-import { Button, Card, Select } from "@unlocalhosted/metalui";
+import { Card, Select } from "@unlocalhosted/metalui";
 import { dayOptions, monthOptions } from "../lib/DateParts";
-import { DownloadIcon, TrashIcon } from "@unlocalhosted/metalui/icons";
-import { LifeSubscriptionIcon, LifeDeadlineIcon } from "@unlocalhosted/metalui/icons/life";
 
 const MIN_YEAR = 1970;
 const THIS_YEAR = new Date().getFullYear();
@@ -24,12 +22,6 @@ type Props = {
 	onMonthChange: (month: number) => void;
 	onDayChange: (day: number) => void;
 	children: ReactNode;
-	onReroll: () => void;
-	onClear: () => void;
-	canDownload: boolean;
-	busy: { done: number; total: number; mode: "zip" | "each" } | null;
-	onDownload: () => void;
-	onDownloadEach: () => void;
 };
 
 export default function YearRangeCard({
@@ -41,12 +33,6 @@ export default function YearRangeCard({
 	onToYearChange,
 	onMonthChange,
 	onDayChange,
-	onClear,
-	onReroll,
-	canDownload,
-	busy,
-	onDownload,
-	onDownloadEach,
 	children,
 }: Props) {
 	return (
@@ -91,38 +77,6 @@ export default function YearRangeCard({
 					options={monthOptions}
 					onValueChange={(value) => onMonthChange(Number(value))}
 				/>
-
-				<div className="mr-auto flex flex-wrap items-center gap-2">
-					<Button size="compact" onClick={onClear}>
-						<TrashIcon size={20} />
-						Clear selection
-					</Button>
-
-					<Button size="compact" onClick={onReroll}>
-						<LifeSubscriptionIcon size={12} />
-						Re-roll
-					</Button>
-
-					<Button
-						size="compact"
-						disabled={!canDownload || busy !== null}
-						onClick={onDownload}
-					>
-						{busy?.mode === "zip"
-							? `Writing ${busy.done}/${busy.total}…`
-							: "Download ZIP"}
-					</Button>
-
-					<Button
-						size="compact"
-						disabled={!canDownload || busy !== null}
-						onClick={onDownloadEach}
-					>
-						{busy?.mode === "each"
-							? `Saving ${busy.done}/${busy.total}…`
-							: "Download each"}
-					</Button>
-				</div>
 			</div>
 
 			<div className="-mx-1 min-h-0 overflow-y-auto px-1 py-1">
