@@ -2,7 +2,6 @@ import { writeTags } from "./ExifClient";
 import { toExifDate } from "./DateParts";
 import { patchDateInPlace } from "./PatchDate";
 
-// Returns a copy of the photo with its capture date replaced
 export async function writeCaptureDate(file: File, date: Date): Promise<Blob> {
 	const exifDate = toExifDate(date);
 

@@ -47,7 +47,6 @@ export default function PhotoDateEditor() {
 		items.length > 0 && !items.some((i) => i.captureDate === undefined && !i.error);
 
 	const run = async (mode: "zip" | "each") => {
-		// Chrome reports approximate RAM in GB; smaller phones get smaller ZIPs
 		const memory = (navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 4;
 		const ZIP_LIMIT = (memory <= 4 ? 12 : 100) * 1024 * 1024;
 
@@ -66,7 +65,7 @@ export default function PhotoDateEditor() {
 					const blob = await writeCaptureDate(item.file, date);
 					if (mode === "each") {
 						saveFile(blob, item.file.name);
-						// a short pause so the browser doesn't drop back-to-back downloads
+
 						await new Promise((resolve) => setTimeout(resolve, 400));
 					} else {
 						group.push({ name: item.file.name, date, blob });
@@ -77,7 +76,7 @@ export default function PhotoDateEditor() {
 					failed.push(item.file.name);
 				}
 				setBusy({ done: index + 1, total, mode });
-				await new Promise((resolve) => setTimeout(resolve, 0)); // let React repaint
+				await new Promise((resolve) => setTimeout(resolve, 0));
 
 				if (mode === "zip" && groupBytes >= ZIP_LIMIT) {
 					part++;
