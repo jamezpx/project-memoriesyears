@@ -2,7 +2,19 @@ import { downloadZip } from "client-zip";
 
 export type ZipEntry = { name: string; date: Date; blob: Blob };
 
-// Comprime las fotos en un .zip y empieza la descarga
+const MIN_ZIP_DATE = new Date(1980, 0, 1);
+
+export function saveFile(blob: Blob, filename: string) {
+	const url = URL.createObjectURL(blob);
+	const link = document.createElement("a");
+	link.href = url;
+	link.download = filename;
+	document.body.appendChild(link);
+	link.click();
+	link.remove();
+	setTimeout(() => URL.revokeObjectURL(url), 60_000);
+}
+
 export async function saveZip(entries: ZipEntry[], filename: string) {
 	const used = new Map<string, number>();
 	const unique = (name: string) => {
@@ -18,15 +30,10 @@ export async function saveZip(entries: ZipEntry[], filename: string) {
 	const zip = await downloadZip(
 		entries.map((e) => ({
 			name: unique(e.name),
-			lastModified: e.date,
+			lastModified: e.date < MIN_ZIP_DATE ? MIN_ZIP_DATE : e.date,
 			input: e.blob,
 		})),
 	).blob();
 
-	const url = URL.createObjectURL(zip);
-	const link = document.createElement("a");
-	link.href = url;
-	link.download = filename;
-	link.click();
-	setTimeout(() => URL.revokeObjectURL(url), 10_000);
+	saveFile(zip, filename);
 }

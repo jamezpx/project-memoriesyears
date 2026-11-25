@@ -27,8 +27,9 @@ type Props = {
 	onReroll: () => void;
 	onClear: () => void;
 	canDownload: boolean;
-	busy: { done: number; total: number } | null;
+	busy: { done: number; total: number; mode: "zip" | "each" } | null;
 	onDownload: () => void;
+	onDownloadEach: () => void;
 };
 
 export default function YearRangeCard({
@@ -45,6 +46,7 @@ export default function YearRangeCard({
 	canDownload,
 	busy,
 	onDownload,
+	onDownloadEach,
 	children,
 }: Props) {
 	return (
@@ -95,17 +97,30 @@ export default function YearRangeCard({
 						<TrashIcon size={20} />
 						Clear selection
 					</Button>
+
 					<Button size="compact" onClick={onReroll}>
 						<LifeSubscriptionIcon size={12} />
 						Re-roll
 					</Button>
+
 					<Button
 						size="compact"
 						disabled={!canDownload || busy !== null}
 						onClick={onDownload}
 					>
-						{busy ? <LifeDeadlineIcon size={16} /> : <DownloadIcon size={16} />}
-						{busy ? `Writing ${busy.done}/${busy.total}...` : "Download ZIP"}
+						{busy?.mode === "zip"
+							? `Writing ${busy.done}/${busy.total}…`
+							: "Download ZIP"}
+					</Button>
+
+					<Button
+						size="compact"
+						disabled={!canDownload || busy !== null}
+						onClick={onDownloadEach}
+					>
+						{busy?.mode === "each"
+							? `Saving ${busy.done}/${busy.total}…`
+							: "Download each"}
 					</Button>
 				</div>
 			</div>

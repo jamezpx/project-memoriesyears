@@ -1,5 +1,6 @@
 import { parseMetadata } from "@uswriting/exiftool";
 import exifr from "exifr";
+import { readTags } from "./ExifClient";
 
 type ExifDates = {
 	DateTimeOriginal?: string;
@@ -25,6 +26,24 @@ function parseExifDate(value: unknown): Date | null {
 	if (year === 0 || month === 0 || day === 0) return null;
 
 	return new Date(year, month - 1, day, hour, minute, second);
+}
+
+function pickDate(tags?: Record<string, unknown> | null): Date | null {
+	for (const tag of TAGS) {
+		const date = parseExifDate(tags?.[tag]);
+		if (date) return date;
+	}
+	return null;
+}
+
+export async function readCaptureDate(file: File): Promise<Date | null> {
+	try {
+		const tags = await exifr.parse(file, { pick: [...TAGS], reviveValues: false });
+		return pickDate(tags);
+	} catch {
+		const tags = await readTags(file, ["-json", ...TAGS.map((tag) => `-${tag}`)]);
+		return pickDate(tags);
+	}
 }
 
 export async function readOnce(file: File): Promise<Date | null> {
@@ -55,24 +74,6 @@ export function enqueueExif<T>(task: () => Promise<T>): Promise<T> {
 	const run = queue.then(task);
 	queue = run.catch(() => undefined);
 	return run;
-}
-
-export async function readCaptureDate(file: File): Promise<Date | null> {
-	try {
-		const data = await exifr.parse(file, {
-			pick: ["DateTimeOriginal", "CreateDate"],
-			xmp: true,
-		});
-
-		for (const tag of TAGS) {
-			const date = toValidDate(data?.[tag]);
-			if (date) return date;
-		}
-	} catch {
-		// Ignore and fall back to ExifTool for unsupported/unusual formats
-	}
-
-	return enqueueExif(() => readOnce(file));
 }
 
 function toValidDate(value: unknown): Date | null {
