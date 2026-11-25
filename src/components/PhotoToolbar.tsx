@@ -20,14 +20,14 @@ export default function PhotoToolbar({
 	onDownloadEach,
 }: Props) {
 	return (
-		<Card.Footer className="shrink-0">
+		<Card.Footer className="justify-center">
 			<Button size="compact" disabled={busy !== null} onClick={onClear}>
-				<TrashIcon size={20} />
+				<TrashIcon size={16} />
 				Clear
 			</Button>
 
 			<Button size="compact" disabled={busy !== null} onClick={onReroll}>
-				<LifeSubscriptionIcon size={12} />
+				<LifeSubscriptionIcon size={16} />
 				Reroll
 			</Button>
 

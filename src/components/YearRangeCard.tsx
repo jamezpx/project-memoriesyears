@@ -40,7 +40,7 @@ export default function YearRangeCard({
 			aria-label="Year range and photos"
 			className="min-h-0 grid-rows-[auto_minmax(0,1fr)] p-3!"
 		>
-			<div className="flex flex-wrap items-center gap-3">
+			<div className="flex flex-wrap items-center gap-3 mb-2">
 				<span className="text-sm opacity-70">From</span>
 				<Select
 					aria-label="From year"

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Attachment, DropZone, Table } from "@unlocalhosted/metalui";
+import { Attachment, DropZone, Table, ScrollArea } from "@unlocalhosted/metalui";
 import YearRangeCard from "./YearRangeCard";
 import { readCaptureDate } from "../lib/ReadDate";
 import { daysInMonth, buildDate, yearFromSeed, newDateFor } from "../lib/DateParts";
