@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Attachment, DropZone } from "@unlocalhosted/metalui";
 import YearRangeCard from "./YearRangeCard";
 import { readCaptureDate } from "../lib/ReadDate";
+import { daysInMonth } from "../lib/DateParts";
 
 type Item = { id: string; file: File; captureDate?: Date | null; error?: string };
 const THIS_YEAR = new Date().getFullYear();
@@ -32,6 +33,8 @@ export default function PhotoDateEditor() {
 	const [notice, setNotice] = useState<string>("");
 	const [fromYear, setFromYear] = useState(THIS_YEAR - 10);
 	const [toYear, setToYear] = useState(THIS_YEAR - 1);
+	const [month, setMonth] = useState(() => new Date().getMonth());
+	const [day, setDay] = useState(() => new Date().getDate());
 	const [roll, setRoll] = useState<number>(0);
 
 	const hasFiles = items.length > 0;
@@ -47,6 +50,11 @@ export default function PhotoDateEditor() {
 		} catch {
 			patch(id, { error: "Couldn't read the date" });
 		}
+	};
+
+	const changeMonth = (next: number) => {
+		setMonth(next);
+		setDay((d) => Math.min(d, daysInMonth(next)));
 	};
 
 	const process = (id: string) => {
@@ -85,8 +93,16 @@ export default function PhotoDateEditor() {
 				<YearRangeCard
 					fromYear={fromYear}
 					toYear={toYear}
+					month={month}
+					day={day}
 					onFromYearChange={setFromYear}
 					onToYearChange={setToYear}
+					onMonthChange={changeMonth}
+					onDayChange={setDay}
+					onClear={() => {
+						setItems([]);
+						setNotice("");
+					}}
 					onReroll={() => setRoll((r) => r + 1)}
 				>
 					<table className="w-full min-w-lg table-fixed border-separate border-spacing-y-2">

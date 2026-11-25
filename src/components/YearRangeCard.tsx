@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Button, Card, Select } from "@unlocalhosted/metalui";
+import { dayOptions, monthOptions } from "../lib/DateParts";
 
 const MIN_YEAR = 1970;
 const THIS_YEAR = new Date().getFullYear();
@@ -14,17 +15,27 @@ function yearOptions(min: number, max: number) {
 type Props = {
 	fromYear: number;
 	toYear: number;
+	month: number;
+	day: number;
 	onFromYearChange: (year: number) => void;
 	onToYearChange: (year: number) => void;
+	onMonthChange: (month: number) => void;
+	onDayChange: (day: number) => void;
 	children: ReactNode;
 	onReroll: () => void;
+	onClear: () => void;
 };
 
 export default function YearRangeCard({
 	fromYear,
 	toYear,
+	month,
+	day,
 	onFromYearChange,
 	onToYearChange,
+	onMonthChange,
+	onDayChange,
+	onClear,
 	onReroll,
 	children,
 }: Props) {
@@ -38,21 +49,47 @@ export default function YearRangeCard({
 				<Select
 					aria-label="From year"
 					size="compact"
+					className="w-fit! min-w-0!"
 					value={String(fromYear)}
 					options={yearOptions(MIN_YEAR, toYear)}
 					onValueChange={(value) => onFromYearChange(Number(value))}
 				/>
+
 				<span className="text-sm opacity-70">To</span>
 				<Select
 					aria-label="To year"
 					size="compact"
+					className="w-fit! min-w-0!"
 					value={String(toYear)}
 					options={yearOptions(fromYear, THIS_YEAR)}
 					onValueChange={(value) => onToYearChange(Number(value))}
 				/>
-				<Button size="compact" className="ml-auto" onClick={onReroll}>
-					Re-roll
-				</Button>
+
+				<span className="text-sm opacity-70">On</span>
+				<Select
+					aria-label="Day"
+					size="compact"
+					className="w-fit! min-w-0!"
+					value={String(day)}
+					options={dayOptions(month)}
+					onValueChange={(value) => onDayChange(Number(value))}
+				/>
+				<Select
+					aria-label="Month"
+					size="compact"
+					value={String(month)}
+					options={monthOptions}
+					onValueChange={(value) => onMonthChange(Number(value))}
+				/>
+
+				<div className="ml-auto flex items-center gap-2">
+					<Button size="compact" onClick={onClear}>
+						Clear selection
+					</Button>
+					<Button size="compact" onClick={onReroll}>
+						Re-roll
+					</Button>
+				</div>
 			</div>
 
 			<div className="-mx-1 min-h-0 overflow-y-auto px-1 py-1">
