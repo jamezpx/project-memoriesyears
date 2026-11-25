@@ -12,7 +12,7 @@ const TAGS = ["DateTimeOriginal", "CreateDate"] as const;
 // pero XMP lo puede escribir como "2026-11-24T20-32-12"
 const EXIF_DATE = /^(\d{4})[:-](\d{2})[:-](\d{2})[ T](\d{2}):(\d{2}):(\d{2})/;
 
-function parseExifMetadata(value: unknown): Date | null {
+function parseExifDate(value: unknown): Date | null {
 	if (typeof value !== "string") return null;
 
 	const match = EXIF_DATE.exec(value);
@@ -24,4 +24,25 @@ function parseExifMetadata(value: unknown): Date | null {
 	if (year === 0 || month === 0 || day === 0) return null;
 
 	return new Date(year, month - 1, day, hour, minute, second);
+}
+
+export async function readCaptureDate(file: File): Promise<Date | null> {
+	const result = await parseMetadata(file, {
+		args: ["-json", ...TAGS.map((tag) => `-${tag}`)],
+		transform: (data) => JSON.parse(data) as ExifDates[],
+	});
+
+	if (!result.success) {
+		throw new Error(result.error || "Could not read the file metadata");
+	}
+
+	const tags = result.data[0];
+
+	for (const tag of TAGS) {
+		const date = parseExifDate(tags?.[tag]);
+
+		if (date) return date;
+	}
+
+	return null;
 }
