@@ -24,6 +24,9 @@ type Props = {
 	children: ReactNode;
 	onReroll: () => void;
 	onClear: () => void;
+	canDownload: boolean;
+	busy: { done: number; total: number } | null;
+	onDownload: () => void;
 };
 
 export default function YearRangeCard({
@@ -37,6 +40,9 @@ export default function YearRangeCard({
 	onDayChange,
 	onClear,
 	onReroll,
+	canDownload,
+	busy,
+	onDownload,
 	children,
 }: Props) {
 	return (
@@ -82,12 +88,19 @@ export default function YearRangeCard({
 					onValueChange={(value) => onMonthChange(Number(value))}
 				/>
 
-				<div className="ml-auto flex items-center gap-2">
+				<div className="mr-auto flex flex-wrap items-center gap-2">
 					<Button size="compact" onClick={onClear}>
 						Clear selection
 					</Button>
 					<Button size="compact" onClick={onReroll}>
 						Re-roll
+					</Button>
+					<Button
+						size="compact"
+						disabled={!canDownload || busy !== null}
+						onClick={onDownload}
+					>
+						{busy ? `Writing ${busy.done}/${busy.total}...` : "Download ZIP"}
 					</Button>
 				</div>
 			</div>
