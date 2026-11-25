@@ -21,7 +21,7 @@ env:
 
 jobs:
     build:
-        runs-on: self-hosted
+        runs-on: ubuntu-latest
         permissions:
             contents: read
             packages: write
@@ -30,13 +30,8 @@ jobs:
             id-token: write
 
         steps:
-            - name: Harden the runner (Audit all outbound calls)
-              uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
-              with:
-                  egress-policy: audit
-
             - name: Checkout repository
-              uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              uses: actions/checkout@v7
 
             # Install the cosign tool except on PR
             # https://github.com/sigstore/cosign-installer
@@ -78,6 +73,7 @@ jobs:
               with:
                   context: .
                   push: ${{ github.event_name != 'pull_request' }}
+                  platforms: linux/amd64
                   tags: ${{ steps.meta.outputs.tags }}
                   labels: ${{ steps.meta.outputs.labels }}
                   cache-from: type=gha
@@ -101,19 +97,14 @@ jobs:
     deploy:
         needs: build
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        runs-on: self-hosted
+        runs-on: ubuntu-latest
 
         steps:
-            - name: Harden the runner (Audit all outbound calls)
-              uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
-              with:
-                  egress-policy: audit
-
             - name: Checkout code
-              uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              uses: actions/checkout@v7
 
             - name: Dokploy Deployment
-              uses: benbristow/dokploy-deploy-action@3a2a16f0158b41377adf300c9dd6d3d396aa7586 # 0.2.2
+              uses: benbristow/dokploy-deploy-action@0.2.2
               with:
                   api_token: ${{ secrets.DOKPLOY_AUTH_TOKEN }}
                   dokploy_url: ${{ secrets.DOKPLOY_URL }}
